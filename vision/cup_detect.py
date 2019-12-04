@@ -81,7 +81,7 @@ def find_cup(img):
 
 
 def main():
-	img = cv2.imread("img1_Color.png")
+	img = cv2.imread("img2_Color.png")
 	result = find_cup(img)
 	cv2.imshow('img',result)
 	cv2.waitKey(0)
