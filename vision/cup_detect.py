@@ -12,57 +12,78 @@ from skimage.measure import block_reduce
 import time
 import pdb
 
+#Resources:
+# https://answers.opencv.org/question/140096/change-colour-of-canny-output/
+# https://stackoverflow.com/questions/51229126/how-to-find-the-red-color-regions-using-opencv
+# Used https://www.pyimagesearch.com/2014/04/21/building-pokedex-python-finding-game-boy-screen-step-4-6/
+# https://stackoverflow.com/questions/22588146/tracking-white-color-using-python-opencv
+# https://www.geeksforgeeks.org/erosion-dilation-images-using-opencv-python/
+# https://stackoverflow.com/questions/32669415/opencv-ordering-a-contours-by-area-python
+# https://stackoverflow.com/questions/28759253/how-to-crop-the-internal-area-of-a-contour
+
+# Filters red and white parts
 def color_threshold(img):
-	hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-	lower_red = np.array([0,120,70])
-	upper_red = np.array([10,255,255])
+	img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+	mask1 = cv2.inRange(img_hsv, (0,50,20), (5,255,255))
+	mask2 = cv2.inRange(img_hsv, (175,50,20), (180,255,255))
+	lower_white = np.array([0,0,168])
+	upper_white = np.array([230,240,255])
+	mask3 = cv2.inRange(img_hsv,lower_white,upper_white)
+	mask = cv2.bitwise_or(mask1,mask2)
+	mask = cv2.bitwise_or(mask3,mask)
+	output = cv2.bitwise_and(img,img,mask=mask)
 
-	lower_red2 = np.array([170,120,70])
-	upper_red2 = np.array([180,255,255])
+	kernel = np.ones([3,3])
+	img_erosion = cv2.erode(output,kernel,iterations=2)
+	img_dilation = cv2.dilate(img_erosion,kernel,iterations=3)
+	output = img_dilation
 
-	mask1 = cv2.inRange(hsv, lower_red, upper_red)
-	mask2 = cv2.inRange(hsv,lower_red2,upper_red2)
-
-	mask = mask1 + mask2 
-	res = img.copy()
-	res[np.where(mask==0)] = 0
-	return res
-
-def find_cup_rim(img):
-	cup_contour = cv2.imread('cup_contour4_Color.png')
-	cup = cv2.cvtColor(cup_contour,cv2.COLOR_BGR2GRAY)
-	img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-	ret1,thresh1 = cv2.threshold(cup,127,255,0)
-	ret2,thresh2 = cv2.threshold(img_gray,127,255,0)
-	_,contours,hierachy = cv2.findContours(thresh1, cv2.RETR_CCOMP,cv2.CHAIN_APPROX_NONE)
-	temp_contours = sorted(contours,key=cv2.contourArea,reverse=True)
-	temp_contour = temp_contours[10]
-	_,contours,hierarchy=cv2.findContours(thresh2,cv2.RETR_CCOMP,cv2.CHAIN_APPROX_SIMPLE)
-	cv2.drawContours(cup_contour,temp_contour,-1, (0,255,0),2)
-	cv2.imshow('img',cup_contour)
+	cv2.imshow('threshold',output)
 	cv2.waitKey(0)
-	for c in contours:
-    #iterate through each contour in the target image and use cv2.matchShape to compare the contour shape
-	    match=cv2.matchShapes(temp_contour,c,2,0.0)
-	    print("match")
-	    #if match value is less than 0.15
-	    if match >= 0.5:
-	        cv2.drawContours(img, [c], -1, (0,255,0),2)
-	return img
+
+	return output
+
+def edge_detection(img):
+	gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	blurred_img = cv2.bilateralFilter(gray_img,7,50,20)
+	edges_of_img = cv2.Canny(blurred_img,00,100)
+
+	cv2.imshow('img',edges_of_img)
+	cv2.waitKey(0)
+	return edges_of_img
+
+
+
+#Finds rim of cup contour
+def contour_detection(img):
+	_, contours, hierachy = cv2.findContours(img.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
+	cup_contour = [contours[i] for i in range(0,5)]
+	return cup_contour
+
+#Creates an image where pixel value is 0 (black) if not inside a cup rim
+# O.w. the pixel value is white (255,255,255)
+def binarize_img(img,contour_lst):
+	blank_img = np.zeros_like(img)
+	cv2.drawContours(blank_img, contour_lst, -1, (255,255,255))
+
+	return blank_img
+
+
+
+# Returns contours of rim of cups
+def find_cup(img):
+	filtered_img = color_threshold(img)
+	edges_of_img = edge_detection(filtered_img)
+	contours = contour_detection(edges_of_img)
+	binary = binarize_img(img, contours)
+	return binary
 
 
 def main():
-	img = cv2.imread("img2_Color.png")
-	# img_prime = img.reshape(img.shape[0]*img.shape[1],img.shape[2])
-	# result1 = color_threshold(img)
-	# gray_result1 = cv2.cvtColor(result1, cv2.COLOR_BGR2GRAY)
-	# edges = cv2.Canny(gray_result1,200,255)
-	# # kmeans = KMeans(n_clusters = 5,random_state=0).fit(img_prime)
-	# # clusters = kmeans.cluster_centers_[kmeans.labels_]
-	# # result = clusters.reshape(img.shape[0],img.shape[1],img.shape[2])
-	result1 = color_threshold(img)
-	result2 = find_cup_rim(result1)
-	cv2.imshow('img',result1)
+	img = cv2.imread("img1_Color.png")
+	result = find_cup(img)
+	cv2.imshow('img',result)
 	cv2.waitKey(0)
 
 main()
