@@ -11,8 +11,7 @@ from sklearn.cluster import KMeans
 from scipy import stats
 
 from skimage.measure import block_reduce
-import time
-import pdb
+
 
 #Resources:
 # https://answers.opencv.org/question/140096/change-colour-of-canny-output/
@@ -70,7 +69,7 @@ def color_threshold(img):
 def edge_detection(img):
 	gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	blurred_img = cv2.bilateralFilter(gray_img,7,50,20)
-	edges_of_img = cv2.Canny(blurred_img,00,100)
+	edges_of_img = cv2.Canny(blurred_img,0,100)
 
 	# cv2.imshow('img',edges_of_img)
 	# cv2.waitKey(0)
@@ -85,7 +84,6 @@ def contour_detection(img):
 	contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
 	centers = []
 	for cnt in contours:
-		print("HER")
 		M = cv2.moments(cnt)
 		x = int(M["m10"] / M["m00"])
 		y = int(M["m01"] / M["m00"])
@@ -125,7 +123,7 @@ def main():
 	# result = color_threshold(result)
 	cv2.imshow('color filtered',result)
 	cv2.waitKey(0)
-	
+
 	# # cv2.imshow('img',img_use)
 	# result = circle_detection(img_use)
 	# # find_cup(img)
