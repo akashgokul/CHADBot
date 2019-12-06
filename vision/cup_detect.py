@@ -8,6 +8,8 @@ from scipy.misc import imresize
 from skimage import filters
 from sklearn.cluster import KMeans
 
+from scipy import stats
+
 from skimage.measure import block_reduce
 import time
 import pdb
@@ -20,12 +22,13 @@ import pdb
 # https://www.geeksforgeeks.org/erosion-dilation-images-using-opencv-python/
 # https://stackoverflow.com/questions/32669415/opencv-ordering-a-contours-by-area-python
 # https://stackoverflow.com/questions/28759253/how-to-crop-the-internal-area-of-a-contour
+#https://www.pyimagesearch.com/2016/02/01/opencv-center-of-contour/
 
-width_low = 0.35
-width_high = 0.75
+width_low = 0.15
+width_high = 0.35
 
-height_low = 0.45
-height_high = 1
+height_low = 0.35
+height_high = 0.9
 
 #Crops image
 def crop_img(img):
@@ -38,9 +41,8 @@ def crop_img(img):
 
 	img_portion = img[width_lower:width_higher,height_lower:height_higher]
 	img_use[width_lower:width_higher,height_lower:height_higher] = img_portion
-
-	# cv2.imshow('crop',img_use)
-	# cv2.waitKey(10)
+	cv2.imshow('crop',img_use)
+	cv2.waitKey(0)
 	return img_use
 
 # Filters red and white parts
@@ -81,15 +83,24 @@ def edge_detection(img):
 def contour_detection(img):
 	_, contours, hierachy = cv2.findContours(img.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
-	return circle_contour_detection(contours)
+	centers = []
+	for cnt in contours:
+		print("HER")
+		M = cv2.moments(cnt)
+		x = int(M["m10"] / M["m00"])
+		y = int(M["m01"] / M["m00"])
+		centers.append((x,y))
+	return contours,centers
 
 #Creates an image where pixel value is 0 (black) if not inside a cup rim
 # O.w. the pixel value is white (255,255,255)
-def binarize_img(img,contour_lst):
+def binarize_img(img,contour_lst,centers):
 	blank_img = np.zeros_like(img)
 	cv2.drawContours(blank_img, contour_lst, -1, (255,255,255))
-	# cv2.imshow('binary',blank_img)
-	# cv2.waitKey(10)
+	for position in centers:
+		cv2.circle(blank_img, position, 7, (0, 255, 0), -1)
+	cv2.imshow('binary',blank_img)
+	cv2.waitKey(0)
 	return blank_img
 
 
@@ -99,41 +110,21 @@ def find_cup(img):
 	cropped_img = crop_img(img)
 	filtered_img = color_threshold(cropped_img)
 	edges_of_img = edge_detection(filtered_img)
-	contours = contour_detection(edges_of_img)
-	binary = binarize_img(img, contours)
+	contours,centers = contour_detection(edges_of_img)
+	binary = binarize_img(img, contours,centers)
 	# cv2.imshow('contour',binary)
 	# cv2.waitKey(10)
 	return binary
 
-def circle_contour_detection(lst):
-	return_contours = []
-	for i in lst:
-		perimeter = cv2.arcLength(i, True)
-		approx_poly = cv2.approxPolyDP(i, 0.01 * perimeter, True)
-		if (len(approx_poly) > 5):
-			return_contours.append(i)
-	
-	return return_contours
-
-
-
-def circle_detection(img):
-	img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-	circles = cv2.HoughCircles(img,  
-                   cv2.HOUGH_GRADIENT, 1, 20, param1 = 50, 
-               param2 = 30, minRadius = 0, maxRadius =0  ) 
-	print(circles == None)
-	if circles is not None:
-		circles = np.uint16(np.around(circles))
-		for b in circles[0,:]:
-			x,y,r = b[0],b[1],b[2]
-			cv2.circle(img, (x, y), r, (0, 255, 0), 2)
-			# cv2.imshow("Detected Circle", img) 
-        	# cv2.waitKey(0) 
 
 def main():
-	img = cv2.imread("img3_Color.png")
-	result = crop_img(img)
+	img = cv2.imread("img2_Color.png")
+	cv2.imshow('original image',img)
+	cv2.waitKey(0)
+	result = find_cup(img)
+	# result = color_threshold(result)
+	cv2.imshow('color filtered',result)
+	cv2.waitKey(0)
 	
 	# # cv2.imshow('img',img_use)
 	# result = circle_detection(img_use)
@@ -142,4 +133,4 @@ def main():
 	# cv2.waitKey(0)
 # 	#blackout_border(img)
 
-# main()
+main()
