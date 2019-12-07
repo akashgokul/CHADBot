@@ -23,10 +23,10 @@ from skimage.measure import block_reduce
 # https://stackoverflow.com/questions/28759253/how-to-crop-the-internal-area-of-a-contour
 #https://www.pyimagesearch.com/2016/02/01/opencv-center-of-contour/
 
-width_low = 0.15
-width_high = 0.35
+width_low = 0
+width_high = 0.3
 
-height_low = 0.35
+height_low = 0.05
 height_high = 0.9
 
 #Crops image
@@ -40,8 +40,8 @@ def crop_img(img):
 
 	img_portion = img[width_lower:width_higher,height_lower:height_higher]
 	img_use[width_lower:width_higher,height_lower:height_higher] = img_portion
-	cv2.imshow('crop',img_use)
-	cv2.waitKey(0)
+	# cv2.imshow('crop',img_use)
+	# cv2.waitKey(0)
 	return img_use
 
 # Filters red and white parts
@@ -85,20 +85,23 @@ def contour_detection(img):
 	centers = []
 	for cnt in contours:
 		M = cv2.moments(cnt)
-		x = int(M["m10"] / M["m00"])
-		y = int(M["m01"] / M["m00"])
-		centers.append((x,y))
+		try:
+			x = int(M["m10"] / M["m00"])
+			y = int(M["m01"] / M["m00"])
+			centers.append((x,y))
+		except ZeroDivisionError:
+			continue
 	return contours,centers
 
 #Creates an image where pixel value is 0 (black) if not inside a cup rim
 # O.w. the pixel value is white (255,255,255)
 def binarize_img(img,contour_lst,centers):
 	blank_img = np.zeros_like(img)
-	cv2.drawContours(blank_img, contour_lst, -1, (255,255,255))
+	#cv2.drawContours(blank_img, contour_lst, -1, (255,255,255))
 	for position in centers:
-		cv2.circle(blank_img, position, 7, (0, 255, 0), -1)
-	cv2.imshow('binary',blank_img)
-	cv2.waitKey(0)
+		cv2.circle(blank_img, position, 7, (255, 255, 255), -1)
+	# cv2.imshow('binary',blank_img)
+	# cv2.waitKey(0)
 	return blank_img
 
 
@@ -106,12 +109,14 @@ def binarize_img(img,contour_lst,centers):
 # Returns contours of rim of cups
 def find_cup(img):
 	cropped_img = crop_img(img)
+	# cv2.imshow('cropped',cropped_img)
+	# cv2.waitKey(0)
 	filtered_img = color_threshold(cropped_img)
 	edges_of_img = edge_detection(filtered_img)
 	contours,centers = contour_detection(edges_of_img)
 	binary = binarize_img(img, contours,centers)
-	# cv2.imshow('contour',binary)
-	# cv2.waitKey(10)
+	cv2.imshow('contour',binary)
+	cv2.waitKey(10)
 	return binary
 
 
@@ -123,6 +128,7 @@ def main():
 	# result = color_threshold(result)
 	cv2.imshow('color filtered',result)
 	cv2.waitKey(0)
+	return 0
 
 	# # cv2.imshow('img',img_use)
 	# result = circle_detection(img_use)
@@ -131,4 +137,4 @@ def main():
 	# cv2.waitKey(0)
 # 	#blackout_border(img)
 
-main()
+# main()

@@ -19,9 +19,10 @@ import rospy
 import message_filters
 import ros_numpy
 import tf
-
-from sensor_msgs.msg import Image, CameraInfo, PointCloud2
-
+import tf2_ros
+import geometry_msgs.msg
+from sensor_msgs import point_cloud2
+from sensor_msgs.msg import Image, CameraInfo, PointCloud2, PointField
 import numpy as np
 import cv2
 
@@ -60,7 +61,7 @@ class PointcloudProcess:
                        points_pub_topic):
 
         self.num_steps = 0
-
+        self._br = tf2_ros.TransformBroadcaster()
         self.messages = deque([], 5)
         self.pointcloud_frame = None
         points_sub = message_filters.Subscriber(points_sub_topic, PointCloud2)
@@ -104,6 +105,32 @@ class PointcloudProcess:
             points = isolate_object_of_interest(points, image, info, 
                 np.array(trans), np.array(rot))
             points_msg = numpy_to_pc2_msg(points)
+            cup_names = []
+            # x_coords = []
+            # y_coords = []
+            pt_counter = 0
+            for pt in point_cloud2.read_points(points_msg, skip_nans=True):
+                # x_coords.append(pt[0])
+                # y_coords.append(pt[1])
+                temp = geometry_msgs.msg.TransformStamped()
+                temp.header.frame_id = "camera_depth_optical_frame"
+                temp.header.stamp = rospy.Time.now()
+                temp.child_frame_id = "cup_" + str(pt_counter)
+
+                temp.transform.translation.x = pt[0]
+                temp.transform.translation.y = pt[1]
+                temp.transform.translation.z = pt[2]
+
+                temp.transform.rotation.x = 0
+                temp.transform.rotation.y = 0
+                temp.transform.rotation.z = 0
+                temp.transform.rotation.w = 1
+
+                cup_names.append("cup_" + str(pt_counter))
+                pt_counter +=1
+                # print(temp)
+                self._br.sendTransform(temp)
+            # sendCoords.send(cup_names)
             self.points_pub.publish(points_msg)
             print("Published segmented pointcloud at timestamp:",
                    points_msg.header.stamp.secs)
