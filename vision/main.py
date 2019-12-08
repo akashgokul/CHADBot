@@ -15,6 +15,7 @@ pointcloud.
 from __future__ import print_function
 from collections import deque
 
+import numpy as np
 import rospy
 import message_filters
 import ros_numpy
@@ -105,31 +106,38 @@ class PointcloudProcess:
             points = isolate_object_of_interest(points, image, info,
                 np.array(trans), np.array(rot))
             points_msg = numpy_to_pc2_msg(points)
-            cup_names = []
-            # x_coords = []
-            # y_coords = []
-            pt_counter = 0
+
+            x_seen = []
+            y_seen = []
+            z_seen = []
             for pt in point_cloud2.read_points(points_msg, skip_nans=True):
-                # x_coords.append(pt[0])
-                # y_coords.append(pt[1])
-                temp = geometry_msgs.msg.TransformStamped()
-                temp.header.frame_id = "camera_depth_optical_frame"
-                temp.header.stamp = rospy.Time.now()
-                temp.child_frame_id = "cup_" + str(pt_counter)
+                curr_x = pt[0]
+                curr_y = pt[1]
+                curr_z = pt[2]
 
-                temp.transform.translation.x = pt[0]
-                temp.transform.translation.y = pt[1]
-                temp.transform.translation.z = pt[2]
+                x_seen.append(curr_x)
+                y_seen.append(curr_y)
+                z_seen.append(curr_z)
+            x_seen, y_seen, z_seen = np.array(x_seen), np.array(y_seen), np.array(z_seen)
+            center_pt = [np.mean(x_seen),np.mean(y_seen),np.mean(z_seen)]
 
-                temp.transform.rotation.x = 0
-                temp.transform.rotation.y = 0
-                temp.transform.rotation.z = 0
-                temp.transform.rotation.w = 1
+            temp = geometry_msgs.msg.TransformStamped()
+            temp.header.frame_id = "camera_depth_optical_frame"
+            temp.header.stamp = rospy.Time.now()
+            temp.child_frame_id = "cup_" + str(pt_counter)
 
-                cup_names.append("cup_" + str(pt_counter))
-                pt_counter +=1
-                # print(temp)
-                self._br.sendTransform(temp)
+            temp.transform.translation.x = center_pt[0]
+            temp.transform.translation.y = center_pt[1]
+            temp.transform.translation.z = center_pt[2]
+
+            temp.transform.rotation.x = 0
+            temp.transform.rotation.y = 0
+            temp.transform.rotation.z = 0
+            temp.transform.rotation.w = 1
+
+            cup_names.append("cup-center")
+            # print(temp)
+            self._br.sendTransform(temp)
             # sendCoords.send(cup_names)
             self.points_pub.publish(points_msg)
             print("Published segmented pointcloud at timestamp:",
