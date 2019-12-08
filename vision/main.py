@@ -124,7 +124,7 @@ class PointcloudProcess:
             temp = geometry_msgs.msg.TransformStamped()
             temp.header.frame_id = "camera_depth_optical_frame"
             temp.header.stamp = rospy.Time.now()
-            temp.child_frame_id = "cup_" + str(pt_counter)
+            temp.child_frame_id = "cup-center"
 
             temp.transform.translation.x = center_pt[0]
             temp.transform.translation.y = center_pt[1]
@@ -134,8 +134,6 @@ class PointcloudProcess:
             temp.transform.rotation.y = 0
             temp.transform.rotation.z = 0
             temp.transform.rotation.w = 1
-
-            cup_names.append("cup-center")
             # print(temp)
             self._br.sendTransform(temp)
             # sendCoords.send(cup_names)
