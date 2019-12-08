@@ -54,7 +54,7 @@ class PointcloudProcess:
     to another PointCloud2 topic.
 
     """
-    def __init__(self, points_sub_topic, 
+    def __init__(self, points_sub_topic,
                        image_sub_topic,
                        cam_info_topic,
                        points_pub_topic):
@@ -69,10 +69,10 @@ class PointcloudProcess:
 
         self._bridge = CvBridge()
         self.listener = tf.TransformListener()
-        
+
         self.points_pub = rospy.Publisher(points_pub_topic, PointCloud2, queue_size=10)
         self.image_pub = rospy.Publisher('segmented_image', Image, queue_size=10)
-        
+
         ts = message_filters.ApproximateTimeSynchronizer([points_sub, image_sub, caminfo_sub],
                                                           10, 0.1, allow_headerless=True)
         ts.registerCallback(self.callback)
@@ -98,10 +98,10 @@ class PointcloudProcess:
                                                        rospy.Time(0))
                 rot = tf.transformations.quaternion_matrix(rot)[:3, :3]
             except (tf.LookupException,
-                    tf.ConnectivityException, 
+                    tf.ConnectivityException,
                     tf.ExtrapolationException):
                 return
-            points = isolate_object_of_interest(points, image, info, 
+            points = isolate_object_of_interest(points, image, info,
                 np.array(trans), np.array(rot))
             points_msg = numpy_to_pc2_msg(points)
             self.points_pub.publish(points_msg)

@@ -5,7 +5,7 @@ Author: Grant Wang
 
 This Python file is the skeleton code for Lab 3. You are expected to fill in
 the body of the incomplete functions below to complete the lab. The 'test_..'
-functions are already defined for you for allowing you to check your 
+functions are already defined for you for allowing you to check your
 implementations.
 
 When you believe you have completed implementations of all the incompeleted
@@ -41,7 +41,7 @@ def read_image(img_name, grayscale=False):
         name of image
     grayscale : boolean
         true if image is in grayscale, false o/w
-    
+
     Returns
     -------
     ndarray
@@ -57,7 +57,7 @@ def read_image(img_name, grayscale=False):
 
 def write_image(img, img_name):
     """writes the image as a file
-    
+
     Parameters
     ----------
     img : ndarray
@@ -70,7 +70,7 @@ def write_image(img, img_name):
 
 def show_image(img_name, title='Fig', grayscale=False):
     """show the  as a matplotlib figure
-    
+
     Parameters
     ----------
     img_name : str
@@ -91,7 +91,7 @@ def show_image(img_name, title='Fig', grayscale=False):
         plt.show()
 
 
-def segment_image(img): 
+def segment_image(img):
     # ONLY USE ONE THRESHOLDING METHOD
 
     # perform thresholding segmentatio
