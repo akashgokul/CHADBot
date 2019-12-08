@@ -85,12 +85,13 @@ def contour_detection(img):
 	centers = []
 	for cnt in contours:
 		M = cv2.moments(cnt)
-		try:
-			x = int(M["m10"] / M["m00"])
-			y = int(M["m01"] / M["m00"])
-			centers.append((x,y))
-		except ZeroDivisionError:
-			continue
+		if(len(centers)< 1):
+			try:
+				x = int(M["m10"] / M["m00"])
+				y = int(M["m01"] / M["m00"])
+				centers.append((x,y))
+			except ZeroDivisionError:
+				continue
 	return contours,centers
 
 #Creates an image where pixel value is 0 (black) if not inside a cup rim
