@@ -26,9 +26,9 @@ def projectile(h, d, v):
     """
     gdv = (9.81 * d * d) / (2 * v * v)
 
-    a = -gdv 
-    b = d
-    c = h - gdv
+    a = gdv
+    b = -d
+    c = -h + gdv
 
     x1 = (-b + math.sqrt(b**2 - 4*a*c)) / (2*a)
     x2 = (-b - math.sqrt(b**2 - 4*a*c)) / (2*a)
@@ -76,9 +76,3 @@ try:
     print("%.4g" % math.degrees(theta) + " degrees")
 except ValueError:
     print("impossible to shoot the ball that far with our gun")
-
-
-
-    
-
-
