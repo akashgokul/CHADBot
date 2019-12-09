@@ -21,7 +21,7 @@ def segment_pointcloud(points, segmented_image, cam_matrix, trans, rot):
 
     in_frame = ((0 <= pixel_coords[0]) & (pixel_coords[0] < image_w)
                 & (0 <= pixel_coords[1]) & (pixel_coords[1] < image_h))
-    
+
     points = points[in_frame]
     pixel_coords = pixel_coords[:, in_frame]
     j, i = pixel_coords
@@ -36,7 +36,7 @@ def project_points(points, cam_matrix, trans, rot):
     of an image captured by a camera with camera matrix as given, of dimensions as given,
     in pixels.
 
-    points is an 3 x N array where the ith entry is an (x, y, z) point in 3D space, in 
+    points is an 3 x N array where the ith entry is an (x, y, z) point in 3D space, in
     the reference frame of the depth camera. This corresponds to the tf frame
     camera_depth_optical_frame. However, the image is taken by an RGB camera, with
     reference frame camera_color_optical_frame. (trans, rot) together give the translation
@@ -46,8 +46,8 @@ def project_points(points, cam_matrix, trans, rot):
     For each point in points, compute the pixel co-ordinates (u, v) onto which that point
     would be projected.
 
-    This function should return a 2 x N integer array of pixel co-ordinates. The ith entry 
-    should  be the index (u, v) of the pixel onto which the ith point in the pointcloud should 
+    This function should return a 2 x N integer array of pixel co-ordinates. The ith entry
+    should  be the index (u, v) of the pixel onto which the ith point in the pointcloud should
     get projected.
 
     Use the point projection model introduced in the lab documentation to perform this
@@ -71,7 +71,7 @@ def project_points(points, cam_matrix, trans, rot):
     multiplication?
 
     Args:
-    
+
     points: (numpy.ndarray) Array of shape (3, N). ith entry is a 3D array representing
             a single (x, y, z) point in the reference frame of the camera.
 
