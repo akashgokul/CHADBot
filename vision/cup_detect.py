@@ -98,12 +98,14 @@ def contour_detection(img):
 # O.w. the pixel value is white (255,255,255)
 def binarize_img(img,contour_lst,centers):
 	blank_img = np.zeros_like(img)
-	#cv2.drawContours(blank_img, contour_lst, -1, (255,255,255))
+	baxter_screen_img = np.zeros_like(img)
+	cv2.drawContours(baxter_screen_img, contour_lst, -1, (255,255,255))
 	for position in centers:
 		cv2.circle(blank_img, position, 7, (255, 255, 255), -1)
+		cv2.star(baxter_screen_img, position,7,(255,0,0),-1)
 	# cv2.imshow('binary',blank_img)
 	# cv2.waitKey(0)
-	return blank_img
+	return blank_img,baxter_screen_img
 
 
 
@@ -115,7 +117,7 @@ def find_cup(img):
 	filtered_img = color_threshold(cropped_img)
 	edges_of_img = edge_detection(filtered_img)
 	contours,centers = contour_detection(edges_of_img)
-	binary = binarize_img(img, contours,centers)
+	binary, baxter_screen_img = binarize_img(img, contours,centers)
 	cv2.imshow('contour',binary)
 	cv2.waitKey(10)
 	return binary
