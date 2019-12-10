@@ -43,7 +43,9 @@ class Game:
 		self.scoreboard = {}
 		self.start_cups = int(args[0])
 		self.winner = None
+		self.players = []
 		for player in args[1:]:
+			self.players.append(player)
 			self.scoreboard[player] = self.start_cups
 
 
@@ -70,10 +72,15 @@ class Game:
 
     def cups_consumed(self,player):
         """
-        Returns the number of drinks consumed by player
+
+        Returns the number of drinks consumed by player.
+		ASSUMES 2 PLAYERS!!
+
         """
         if player in self.scoreboard:
-            return self.start_cups - self.scoreboard[player]
+			opponent_lst = [opponent for opponent in self.players if opponent != player]
+			opponent_score = sum([self.scoreboard[opponent] for opponent in opponent_lst])
+			return self.start_cups - opponent_score
         else:
             return None
 
