@@ -12,7 +12,7 @@ Example usage:
 ---------------------------------------------
 
 Example usage using Game.play():
- 
+
 >>> g = Game(2, "Valmik", "Baxter")
 >>> g.play()
 
@@ -68,6 +68,15 @@ class Game:
 			return self.scoreboard[player]
 		return None
 
+    def cups_consumed(self,player):
+        """
+        Returns the number of drinks consumed by player
+        """
+        if player in self.scoreboard:
+            return self.start_cups - self.scoreboard[player]
+        else:
+            return None
+
 	def play(self):
 		"""
 		Optional play function for simulation purposes.
@@ -85,8 +94,3 @@ class Game:
 		print(self.winner + " wins!")
 		print(self.scoreboard)
 		return self.winner
-
-
-
-
-
