@@ -9,7 +9,9 @@ Example usage:
 >>> g.get_score("Baxter")
 3
 
-----------------------------------------------
+---------------------------------------------
+
+Example usage using Game.play():
  
 >>> g = Game(2, "Valmik", "Baxter")
 >>> g.play()
