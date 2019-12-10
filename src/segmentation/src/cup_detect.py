@@ -102,7 +102,7 @@ def binarize_img(img,contour_lst,centers):
 	cv2.drawContours(baxter_screen_img, contour_lst, -1, (255,255,255))
 	for position in centers:
 		cv2.circle(blank_img, position, 7, (255, 255, 255), -1)
-		cv2.circle(baxter_screen_img, position,7,(255,0,0),-1)
+		cv2.circle(baxter_screen_img, position,7,(0,0,255),-1)
 	# cv2.imshow('binary',blank_img)
 	# cv2.waitKey(0)
 	return blank_img,baxter_screen_img
