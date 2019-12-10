@@ -1,0 +1,23 @@
+source devel/setup.bash
+ln -s /scratch/shared/baxter_ws/baxter.sh ~/ros_workspaces/Thanos
+
+./baxter.sh archytas.local
+./baxter.sh asimov.local
+./baxter.sh ada.local
+./baxter.sh ayrton.local
+
+rosrun baxter_tools enable_robot.py -e
+rosrun baxter_interface joint_trajectory_action_server.py
+roslaunch baxter_moveit_config baxter_grippers.launch 
+rosrun baxter_tools camera_control.py -o left_hand_camera -r 1280x800
+rosrun baxter_tools camera_control.py -o head_camera -r 1280x800
+roslaunch ar_tag ar_track_baxter.launch
+rosrun transform_to_baxter recvCoords.py
+rosrun main gripper_sub.py
+rosrun main shoot_once.py ar_marker_4
+
+roslaunch realsense2_camera rs_camera.launch filters:=pointcloud
+roslaunch ar_tag ar_track_cam.launch
+rosrun rviz rviz
+rosrun segmentation main.py
+rosrun transform_to_baxter sendCoords.py origin_frame cup_center

@@ -113,11 +113,14 @@ class PointcloudProcess:
                 np.array(trans), np.array(rot))
             points_msg = numpy_to_pc2_msg(points)
 
+
+            cv2.imshow('screen_img',screen_img)
+            cv2.waitKey(5)
             # msg = cv_bridge.CvBridge().cv2_to_imgmsg(screen_img, encoding="bgr8")
-            # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # s.connect((HOST, PORT))
-            # s.sendall(pickle.dumps(msg))
-            # s.close()
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((HOST, PORT))
+            s.sendall(pickle.dumps(screen_img))
+            s.close()
 
 
             x_seen = []

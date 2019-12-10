@@ -12,6 +12,7 @@ import sys
 import socket
 import pickle
 import tf2_ros
+import cv2
 # import geometry_msgs.msg
 from sensor_msgs.msg import (
     Image,
@@ -20,20 +21,19 @@ from sensor_msgs.msg import (
 # This is Python's sytax for a main() method, which is run by default
 # when exectued in the shell
 if __name__ == '__main__':
-  pub = rospy.Publisher('/robot/xdisplay', Image, latch=True, queue_size=1)
   # Check if the node has received a signal to shut down
   # If not, run the talker method
 
   #Run this program as a new node in the ROS computation graph 
   #called /turtlebot_controller.
-  rospy.init_node('recv_coords', anonymous=True)
-  br = tf2_ros.TransformBroadcaster()
+  rospy.init_node('recv_img', anonymous=True)
+  pub = rospy.Publisher('/robot/xdisplay', Image, latch=True, queue_size=1)
 
   try:
 
     # Create a timer object that will sleep long enough to result in
     # a 1Hz publishing rate
-    r = rospy.Rate(1) # 1hz
+    r = rospy.Rate(1000) # 1hz
 
     HOST = ''                 # Symbolic name meaning all available interfaces
     PORT = 50077              # Arbitrary non-privileged port
@@ -44,7 +44,6 @@ if __name__ == '__main__':
     conn, addr = s.accept()
     message = ''
     # print ('Connected by', addr)
-    # trans = tfBuffer.lookup_transform(origin_frame, goal_frames[i], rospy.Time())
     while not rospy.is_shutdown():
       data = conn.recv(1024)
       
@@ -52,7 +51,10 @@ if __name__ == '__main__':
         s.listen(1)
         conn, addr = s.accept()
         temp = pickle.loads(message)
-        pub.publish(temp)
+        # msg = cv_bridge.CvBridge().cv2_to_imgmsg(screen_img, encoding="bgr8")
+        cv2.imshow('screen_img',message)
+        cv2.waitKey(5)
+        # pub.publish(temp)
         message = ''
         # print("\n")
         continue
