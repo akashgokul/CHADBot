@@ -154,8 +154,8 @@ def find_cup(img):
 	edges_of_img = edge_detection(filtered_img)
 	contours,centers = contour_detection(edges_of_img)
 	binary, baxter_screen_img = binarize_img(img, contours,centers)
-	cv2.imshow('baxter',baxter_screen_img)
-	cv2.waitKey(10)
+	# cv2.imshow('baxter',baxter_screen_img)
+	# cv2.waitKey(10)
 	return binary, baxter_screen_img
 
 #
