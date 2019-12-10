@@ -23,11 +23,14 @@ from skimage.measure import block_reduce
 # https://stackoverflow.com/questions/28759253/how-to-crop-the-internal-area-of-a-contour
 #https://www.pyimagesearch.com/2016/02/01/opencv-center-of-contour/
 
-width_low = 0
-width_high = 0.3
+#Refers to bounding box top_boundary extends downward, bottom_boundary extends upward, left_boundary ->, right_boundary <-
+#as you increase these multipliers
 
-height_low = 0.05
-height_high = 0.9
+top_boundary = 0
+bottom_boundary = 0.3
+
+left_boundary = 0.05
+right_boundary = 0.9
 
 def crop_img(img):
 	"""
