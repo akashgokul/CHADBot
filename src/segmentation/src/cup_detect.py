@@ -125,6 +125,17 @@ def binarize_img(img,contour_lst,centers):
 	# cv2.waitKey(0)
 	return bw_img,baxter_screen_img
 
+def drunken_blur(img,opp_score):
+	"""
+	Input: Image, opponent score (scalar)
+
+	Adds random noise to image with variance being a linear function of opp_score
+
+	Returns: Image with added random noise
+	"""
+    img_copy = img.copy()
+    cv2.randn(img_copy,(0,0,0),(2*opp_score,3*opp_score,4*opp_score))
+    return img + img_copy
 
 
 def find_cup(img):
@@ -147,7 +158,7 @@ def find_cup(img):
 	cv2.waitKey(10)
 	return binary, baxter_screen_img
 
-# 
+#
 # def main():
 # 	img = cv2.imread("img2_Color.png")
 # 	cv2.imshow('original image',img)
