@@ -29,8 +29,10 @@ width_high = 0.3
 height_low = 0.05
 height_high = 0.9
 
-#Crops image
 def crop_img(img):
+	"""
+	Crops img according to parameters above (currently set to top left corner)
+	"""
 	height, width, channels = img.shape
 	img_use = np.zeros(img.shape,np.uint8)
 	width_lower = int(width*width_low)
@@ -44,8 +46,11 @@ def crop_img(img):
 	# cv2.waitKey(0)
 	return img_use
 
-# Filters red and white parts
+
 def color_threshold(img):
+	"""
+	Mask to filter only pixels whose colors are red or white (in our case corresponds to cup)
+	"""
 	img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 	mask1 = cv2.inRange(img_hsv, (0,50,20), (5,255,255))
 	mask2 = cv2.inRange(img_hsv, (175,50,20), (180,255,255))
@@ -67,6 +72,9 @@ def color_threshold(img):
 	return output
 
 def edge_detection(img):
+	"""
+	Returns Canny Edge Detection performed on input img
+	"""
 	gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	blurred_img = cv2.bilateralFilter(gray_img,7,50,20)
 	edges_of_img = cv2.Canny(blurred_img,0,100)
@@ -77,9 +85,12 @@ def edge_detection(img):
 
 
 
-#Finds rim of cup contour
-#Add circle detection!!!
 def contour_detection(img):
+	"""
+	Input: Img = output of Canny Edge Detector
+
+	Output: Returns each contour and the center of the contour (if possible)
+	"""
 	_, contours, hierachy = cv2.findContours(img.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)
 	centers = []
@@ -94,23 +105,37 @@ def contour_detection(img):
 				continue
 	return contours,centers
 
-#Creates an image where pixel value is 0 (black) if not inside a cup rim
-# O.w. the pixel value is white (255,255,255)
+
 def binarize_img(img,contour_lst,centers):
-	blank_img = np.zeros_like(img)
+	"""
+	Input: 	Image
+			List of Contours
+			List of Center position of each contour
+
+	Outputs: bw_img = An image which is black everywhere except at the position of a center (where it is white)
+			 screen_img = Image used for Baxter Screen, an image containing contours and center of contours
+	"""
+	bw_img = np.zeros_like(img)
 	baxter_screen_img = np.zeros_like(img)
 	cv2.drawContours(baxter_screen_img, contour_lst, -1, (255,255,255))
 	for position in centers:
-		cv2.circle(blank_img, position, 7, (255, 255, 255), -1)
+		cv2.circle(bw_img, position, 7, (255, 255, 255), -1)
 		cv2.circle(baxter_screen_img, position,7,(0,0,255),-1)
 	# cv2.imshow('binary',blank_img)
 	# cv2.waitKey(0)
-	return blank_img,baxter_screen_img
+	return bw_img,baxter_screen_img
 
 
 
-# Returns contours of rim of cups
 def find_cup(img):
+	"""
+	Input: An image, img
+
+	Finds the rims and center points of each cup
+
+	Outputs:Binary = Black-White image containing only the centers of Contours
+			Baxter_screen_img = Image containing contours and center of contours (for Baxter screen)
+	"""
 	cropped_img = crop_img(img)
 	# cv2.imshow('cropped',cropped_img)
 	# cv2.waitKey(0)
@@ -122,16 +147,16 @@ def find_cup(img):
 	cv2.waitKey(10)
 	return binary, baxter_screen_img
 
-
-def main():
-	img = cv2.imread("img2_Color.png")
-	cv2.imshow('original image',img)
-	cv2.waitKey(0)
-	result = find_cup(img)
-	# result = color_threshold(result)
-	cv2.imshow('color filtered',result)
-	cv2.waitKey(0)
-	return 0
+# 
+# def main():
+# 	img = cv2.imread("img2_Color.png")
+# 	cv2.imshow('original image',img)
+# 	cv2.waitKey(0)
+# 	result = find_cup(img)
+# 	# result = color_threshold(result)
+# 	cv2.imshow('color filtered',result)
+# 	cv2.waitKey(0)
+# 	return 0
 
 	# # cv2.imshow('img',img_use)
 	# result = circle_detection(img_use)
