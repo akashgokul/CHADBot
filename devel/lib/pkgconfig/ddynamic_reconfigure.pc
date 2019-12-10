@@ -1,0 +1,8 @@
+prefix=/home/cc/ee106a/fa19/class/ee106a-afu/ros_workspaces/Thanos/devel
+
+Name: ddynamic_reconfigure
+Description: Description of ddynamic_reconfigure
+Version: 0.2.1
+Cflags: -I/home/cc/ee106a/fa19/class/ee106a-afu/ros_workspaces/Thanos/src/ddynamic_reconfigure/include
+Libs: -L/home/cc/ee106a/fa19/class/ee106a-afu/ros_workspaces/Thanos/devel/lib -lddynamic_reconfigure
+Requires: roscpp dynamic_reconfigure

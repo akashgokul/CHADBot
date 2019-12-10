@@ -1,0 +1,16 @@
+<launch>
+	<include file="$(find ar_tag)/launch/ar_track_baxter.launch"/>
+
+	<arg name="num_cups" default="6"/>
+
+	<node name="gripper_sub"
+		  pkg="main"
+		  type="gripper_sub.py"
+		  output="screen">
+
+		<param name="num_cups" value="$(arg num_cups)"/>
+
+	</node>
+
+
+</launch>

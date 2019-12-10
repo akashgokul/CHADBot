@@ -1,0 +1,8 @@
+prefix=/home/cc/ee106a/fa19/class/ee106a-afu/ros_workspaces/Thanos/devel
+
+Name: realsense2_description
+Description: Description of realsense2_description
+Version: 2.2.9
+Cflags: 
+Libs: -L/home/cc/ee106a/fa19/class/ee106a-afu/ros_workspaces/Thanos/devel/lib 
+Requires: 

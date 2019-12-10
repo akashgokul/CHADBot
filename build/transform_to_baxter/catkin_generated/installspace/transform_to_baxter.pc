@@ -1,0 +1,8 @@
+prefix=/home/cc/ee106a/fa19/class/ee106a-afu/ros_workspaces/Thanos/install
+
+Name: transform_to_baxter
+Description: Description of transform_to_baxter
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/cc/ee106a/fa19/class/ee106a-afu/ros_workspaces/Thanos/install/lib 
+Requires: 

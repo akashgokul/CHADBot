@@ -1,0 +1,8 @@
+prefix=/home/cc/ee106a/fa19/class/ee106a-afu/ros_workspaces/Thanos/install
+
+Name: ar_tag
+Description: Description of ar_tag
+Version: 0.0.0
+Cflags: -I/home/cc/ee106a/fa19/class/ee106a-afu/ros_workspaces/Thanos/install/include
+Libs: -L/home/cc/ee106a/fa19/class/ee106a-afu/ros_workspaces/Thanos/install/lib 
+Requires: 
