@@ -78,9 +78,12 @@ class Game:
 
         """
         if player in self.scoreboard:
-			opponent_lst = [opponent for opponent in self.players if opponent != player]
-			opponent_score = sum([self.scoreboard[opponent] for opponent in opponent_lst])
-			return self.start_cups - opponent_score
+			if(self.winner == None):
+				opponent_lst = [opponent for opponent in self.players if opponent != player]
+				opponent_score = sum([self.scoreboard[opponent] for opponent in opponent_lst])
+				return self.start_cups - opponent_score
+			else:
+				return 0
         else:
             return None
 
