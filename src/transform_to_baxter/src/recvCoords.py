@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     # Create a timer object that will sleep long enough to result in
     # a 1Hz publishing rate
-    r = rospy.Rate(1) # 1hz
+    r = rospy.Rate(10) # 1hz
 
     HOST = ''                 # Symbolic name meaning all available interfaces
     PORT = 50007              # Arbitrary non-privileged port
