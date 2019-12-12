@@ -5,23 +5,6 @@
 
 	<arg name="num_cups" default="6"/>
 
-	<node name="joint_trajectory_action_server"
-		  pkg="baxter_interface"
-		  type="joint_trajectory_action_server.py"
-		  output="screen" />
-
-	<node name="camera_control"
-		  pkg="baxter_tools"
-		  type="camera_control.py"
-		  output="screen" 
-		  args="-o left_hand_camera -r 1280x800"/>
-
-	<node name="camera_control_2"
-		  pkg="baxter_tools"
-		  type="camera_control.py"
-		  output="screen" 
-		  args="-o head_camera -r 1280x800" />
-
 	<node name="recvCoords"
 		  pkg="transform_to_baxter"
 		  type="recvCoords.py"
@@ -32,26 +15,16 @@
 		  type="recvImg.py"
 		  output="screen" />
 
+	<node name="joint_trajectory_action_server"
+		  pkg="baxter_interface"
+		  type="joint_trajectory_action_server.py"
+		  output="screen" />
+
 	<node name="gripper_sub"
 		  pkg="main"
 		  type="gripper_sub.py"
 		  output="screen">
 		<param name="num_cups" value="$(arg num_cups)"/>
 	</node>
-
-
-	<node name="shoot_once"
-		  pkg="main"
-		  type="shoot_once.py"
-		  output="screen"
-		  args="ar_marker_4"/>
-
-	<node name="tf_echo"
-		  pkg="tf"
-		  type="tf_echo"
-		  output="screen"
-		  args="right_lower_shoulder gun_frame" />
-
-
 
 </launch>

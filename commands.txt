@@ -7,15 +7,16 @@ ln -s /scratch/shared/baxter_ws/baxter.sh ~/ros_workspaces/Thanos
 ./baxter.sh ayrton.local
 
 rosrun baxter_tools enable_robot.py -e
-rosrun baxter_interface joint_trajectory_action_server.py
-roslaunch baxter_moveit_config baxter_grippers.launch 
-rosrun baxter_tools camera_control.py -o left_hand_camera -r 1280x800
-rosrun baxter_tools camera_control.py -o head_camera -r 1280x800
-roslaunch ar_tag ar_track_baxter.launch
 rosrun transform_to_baxter recvCoords.py
 rosrun transform_to_baxter recvImg.py
-rosrun transform_to_baxter recvCoords.py
+rosrun baxter_interface joint_trajectory_action_server.py
+roslaunch baxter_moveit_config baxter_grippers.launch 
 rosrun main gripper_sub.py
+
+rosrun baxter_tools camera_control.py -o left_hand_camera -r 1280x800
+rosrun baxter_tools camera_control.py -o head_camera -r 1280x800
+
+roslaunch ar_tag ar_track_baxter.launch
 rosrun main shoot_once.py ar_marker_4
 rosrun tf tf_echo right_lower_shoulder gun_frame
 

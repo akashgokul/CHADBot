@@ -2,11 +2,6 @@
 	<include file="$(find realsense2_camera)/launch/rs_camera.launch"/>
 	<include file="$(find ar_tag)/launch/ar_track_cam.launch"/>
 
-	<node name="segment"
-		  pkg="segmentation"
-		  type="main.py"
-		  output="screen" />
-
 	<node name="rviz"
 		  pkg="rviz"
 		  type="rviz"
@@ -16,6 +11,11 @@
 		  pkg="transform_to_baxter"
 		  type="sendCoords.py"
 		  args="cup_center cup_center" />
+		  
+	<node name="segment"
+		  pkg="segmentation"
+		  type="main.py"
+		  output="screen" />
 
 
 </launch>
